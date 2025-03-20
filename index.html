@@ -66,7 +66,6 @@
       flex-direction: column;
       gap: 15px;
     }
-
     .chat-body::-webkit-scrollbar {
       width: 10px;
       background-color: #1f2937;
@@ -134,13 +133,7 @@
       line-height: 1.6;
       word-break: break-word;
       max-width: 90%;
-
     }
-
-.chat-message.bot * {
-  margin: 0;
-  padding: 0;
-}
     .chat-message.user {
       background-color: #ffffff;
       color: #111827;
@@ -183,7 +176,6 @@
     <div class="chat-header">
       <span>S E R A</span>
     </div>
-    <!-- Chat body tanpa pesan sambutan awal -->
     <div class="chat-body" id="chat-body">
     </div>
     <form id="chat-form" class="chat-footer">
@@ -221,14 +213,12 @@
         if (!isMobile) {
           // Pada desktop:
           if (e.key === "Enter" && e.shiftKey) {
-            // Biarkan event untuk membuat new line jika Shift ditekan
-            return;
+            return; // Biarkan event untuk new line
           } else if (e.key === "Enter") {
             e.preventDefault();
             $("#chat-form").submit();
           }
         }
-        // Di perangkat mobile, biarkan Enter menghasilkan new line (tanpa intervensi)
       });
 
       $("#chat-form").submit(function (e) {
@@ -241,35 +231,33 @@
 
         $("#chat-body").append("<div class='chat-message user'>" + message.replace(/\n/g, "<br>") + "</div>");
         $("#chat-input").val("");
-        adjustTextArea(); // Reset tinggi textarea
+        adjustTextArea();
         scrollChatToBottom();
 
         var $botMsg = $("<div class='chat-message bot'>").html("<span class='loading'><span>.</span><span>.</span><span>.</span></span>");
         $("#chat-body").append($botMsg);
         scrollChatToBottom();
 
-$.ajax({
-    type: "POST",
-    url: "https://gemininodejsaspri-production.up.railway.app/chat", // Ubah URL sesuai endpoint Node.js Anda
-    contentType: "application/json",   // Mengirim data sebagai JSON
-    data: JSON.stringify({ chat: message, history: [] }),
-    xhrFields: {
-        withCredentials: true
-    },
-    success: function (data) {
-        isLoading = false;
-        $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-        $botMsg.html(data.response.replace(/\n/g, "<br>"));
-        scrollChatToBottom();
-    },
-    error: function (error) {
-        isLoading = false;
-        $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-        $botMsg.html("Maaf, terjadi kesalahan.");
-        scrollChatToBottom();
-    }
-});
-
+        $.ajax({
+          type: "POST",
+          url: "https://gemininodejsaspri-production.up.railway.app/chat",
+          contentType: "application/json",
+          data: JSON.stringify({ chat: message, history: [] }),
+          xhrFields: { withCredentials: true },
+          success: function (data) {
+            isLoading = false;
+            $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
+            // Menggunakan trim() untuk menghapus spasi atau newline ekstra
+            $botMsg.html(data.response.trim().replace(/\n/g, "<br>"));
+            scrollChatToBottom();
+          },
+          error: function (error) {
+            isLoading = false;
+            $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
+            $botMsg.html("Maaf, terjadi kesalahan.");
+            scrollChatToBottom();
+          }
+        });
       });
 
       function scrollChatToBottom() {
