@@ -248,6 +248,7 @@
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
             // Menggunakan trim() untuk menghapus spasi atau newline ekstra
+$botMsg.html(data.response.trim());
 
 
 
