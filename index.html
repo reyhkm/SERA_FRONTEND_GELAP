@@ -248,10 +248,12 @@
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
             // Menggunakan trim() untuk menghapus spasi atau newline ekstra
-            $botMsg.html(
+$botMsg.html(
   data.response
-    .replace(/(?<!<\/?(ul|li|p)>)(\n)/g, "<br>") // Hanya ganti \n jika bukan bagian <ul>, <li>, atau <p>
+    .replace(/\n{2,}/g, "</p><p>") // Jika ada 2+ newlines → Pisahkan ke paragraf baru
+    .replace(/\n/g, "<br>") // Jika hanya 1 newline → Tambahkan <br>
 );
+
 
             scrollChatToBottom();
           },
