@@ -309,14 +309,12 @@
 // Atau, versi yang lebih ringkas (ternary operator):
 $botMsg.html(
   data.response.trim()
-    // Ganti newline dengan <br>
     .replace(/\n/g, "<br>")
-    // Ganti titik dengan kondisi: jika karakter sebelum titik kurang dari 10, biarkan, kalau tidak tambahkan <br><br>
-    .replace(/(\S+)(\.)/g, (match, preceding, dot) => {
-      return preceding.length < 10 ? preceding + dot : preceding + dot + "<br><br>";
+    .replace(/(\.)(\S{1,5})/g, (match, dot, following) => {
+      // Jika teks setelah titik (tanpa spasi) terdiri dari maksimal 5 karakter,
+      // maka jangan tambahkan <br><br> setelah titik.
+      return following.length <= 5 ? dot + following : dot + "<br><br>" + following;
     })
-    // Pastikan tidak ada lebih dari 2 kali <br> berturut-turut
-    .replace(/(<br>\s*){3,}/g, "<br><br>")
 );
 
 
