@@ -311,12 +311,11 @@ $botMsg.html(
   data.response.trim()
     .replace(/\n/g, "<br>")
     // Tangkap 1-2 kata setelah titik (mengabaikan spasi ekstra)
-    .replace(/\.\s*((?:\S+\s?){1,2})/g, (match, following) => {
-      // Hitung jumlah karakter non-spasi dari kata-kata yang tertangkap
-      const charCount = following.replace(/\s/g, '').length;
-      // Jika lebih dari 5 karakter, sisipkan <br><br> setelah titik
-      return charCount > 5 ? ".<br><br>" + following : ". " + following;
-    })
+.replace(/(?<!@[\w.]+)\.\s*((?:\S+\s?){1,2})/g, (match, following) => {
+  const charCount = following.replace(/\s/g, '').length;
+  return charCount > 5 ? ".<br><br>" + following : ". " + following;
+})
+
 );
 
 
