@@ -309,14 +309,16 @@
 // Atau, versi yang lebih ringkas (ternary operator):
 $botMsg.html(
   data.response.trim()
-    // Ganti setiap newline dengan <br>
+    // Ganti newline dengan <br>
     .replace(/\n/g, "<br>")
-    // Ganti setiap titik yang didahului oleh karakter non-spasi
+    // Ganti titik dengan kondisi: jika karakter sebelum titik kurang dari 10, biarkan, kalau tidak tambahkan <br><br>
     .replace(/(\S+)(\.)/g, (match, preceding, dot) => {
-      // Jika jumlah karakter sebelum titik kurang dari 10, jangan tambahkan <br><br>
-      return preceding.length < 5 ? preceding + dot : preceding + dot + "<br><br>";
+      return preceding.length < 10 ? preceding + dot : preceding + dot + "<br><br>";
     })
+    // Pastikan tidak ada lebih dari 2 kali <br> berturut-turut
+    .replace(/(<br>\s*){3,}/g, "<br><br>")
 );
+
 
 
             scrollChatToBottom();
