@@ -214,18 +214,28 @@
       color: hsl(240 5% 64.9%);
     }
     /* Styling untuk ikon copy pada pesan bot */
-    .copy-btn {
-      position: absolute;
-      top: 8px;
-      right: 8px;
-      background: transparent;
-      border: none;
-      color: hsl(240 5% 64.9%);
-      font-size: 0.8rem;
-      cursor: pointer;
-      opacity: 0.7;
-      transition: opacity 0.2s ease;
-    }
+.copy-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: transparent;
+  border: none;
+  color: hsl(240 5% 64.9%);
+  font-size: 0.8rem;
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity 0.2s ease;
+}
+
+/* Penyesuaian untuk tampilan desktop */
+@media (min-width: 768px) {
+  .chat-message.bot .copy-btn {
+    top: 12px;
+    right: 12px;
+    font-size: 0.9rem;
+  }
+}
+
     .copy-btn:hover {
       opacity: 1;
     }
