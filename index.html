@@ -297,46 +297,28 @@
         $("#chat-body").append($botMsg);
         scrollChatToBottom();
 
-$.ajax({
-  type: "POST",
-  url: "https://gemininodejsaspri-production.up.railway.app/chat",
-  contentType: "application/json",
-  data: JSON.stringify({ chat: message, history: [] }),
-  xhrFields: { withCredentials: true },
-  success: function (data) {
-    // 1. Hapus elemen loading DULU.
-    $botMsg.find(".loading").remove();
+        $.ajax({
+          type: "POST",
+          url: "https://gemininodejsaspri-production.up.railway.app/chat",
+          contentType: "application/json",
+          data: JSON.stringify({ chat: message, history: [] }),
+          xhrFields: { withCredentials: true },
+          success: function (data) {
+            isLoading = false;
+            $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
+// Atau, versi yang lebih ringkas (ternary operator):
+$botMsg.html(data.response.trim().replace(/(\n|\.)/g, match => match === '\n' ? "<br>" : ".<br><br>"));
 
-    // 2. Sekarang, ganti konten dengan response (setelah loading dihapus).
-    $botMsg.html(data.response.trim().replace(/(\n|\.)/g, (match, offset, string) => {
-        if (match === '\n') {
-            return "<br>";
-        } else { // match === '.'
-            const beforeDot = string.substring(0, offset);
-            if (beforeDot.length < 10) {
-                return ".";
-            } else {
-                return ".<br><br>";
-            }
-        }
-    }));
-
-    // 3. Set isLoading ke false SETELAH semuanya selesai.
-    isLoading = false;
-    $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-    scrollChatToBottom();
-  },
-  error: function (error) {
-    // Hapus elemen loading jika terjadi error
-    $botMsg.find(".loading").remove();
-    $botMsg.html("Maaf, terjadi kesalahan.");
-
-    isLoading = false; // Set isLoading = false
-    $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-    scrollChatToBottom();
-  }
-});
-
+            scrollChatToBottom();
+          },
+          error: function (error) {
+            isLoading = false;
+            $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
+            $botMsg.html("Maaf, terjadi kesalahan.");
+            scrollChatToBottom();
+          }
+        });
+      });
 
       function scrollChatToBottom() {
         $("#chat-body").scrollTop($("#chat-body")[0].scrollHeight);
