@@ -102,7 +102,7 @@
         }
 
         .chat-footer {
-  padding: 2.2rem 1.2rem; 
+          padding: 1.25rem 1.5rem;
             border-top: 1px solid hsl(240 3.7% 15.9%);
             display: flex;
             align-items: center;
@@ -117,13 +117,14 @@
           padding: 0.625rem 0.75rem;
             border: 1px solid hsl(240 3.7% 15.9%);
             border-radius: 0.375rem;
-            font-size: 0.875rem;
+            font-size: 1rem; /* Perbesar ukuran font input */
             background-color: hsl(240 3.7% 15.9%);
             color: hsl(0 0% 98%);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
             resize: none;
             overflow-y: hidden;
             max-height: 10rem;
+            min-height: 3.5rem;
         }
         .chat-input:focus {
             outline: none;
@@ -136,9 +137,9 @@
           background-color: hsl(0 0% 98%);
           color: hsl(240 5.9% 10%);
             border: none;
-            padding: 0.5rem;
-            width: 2.5rem;
-            height: 2.5rem;
+            padding: 0.75rem;
+            width: 3rem;
+            height: 3rem;
             border-radius: 0.375rem;
             font-size: 1rem;
             display: flex;
@@ -161,7 +162,7 @@
         .chat-message {
             padding: 0.75rem 1rem;
           border-radius: 0.5rem;
-            font-size: 0.875rem;
+            font-size: 1rem; /* Perbesar ukuran font chat */
             line-height: 1.5;
             word-break: break-word;
             max-width: 75%;
@@ -192,29 +193,41 @@
             margin: 0 0 0.5rem 0;
         }
 
-        .chat-message.bot .loading {
-            display: inline-flex;
-            align-items: center;
-        }
+      .chat-message.bot .loading {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center; /* Pusatkan titik-titik */
+          width: 100%; /* Pastikan loading menutupi seluruh lebar pesan */
 
-    .chat-message.bot .loading span {
-      display: inline-block;
-      width: 0.4rem;
-      height: 0.4rem;
-      border-radius: 50%;
-      background-color: hsl(0 0% 98%);
-      margin: 0 0.1rem;
-      animation: dot-bounce 1.2s infinite ease-in-out;
-    }
+      }
+
+      .chat-message.bot .loading span {
+        display: inline-block;
+        width: 0.5rem;
+        height: 0.5rem;
+        border-radius: 50%;
+        background-color: hsl(0 0% 98%);
+        margin: 0 0.2rem;
+        animation: dot-bounce 1s infinite cubic-bezier(0.4, 0.0, 0.6, 1); /* Animasi yang lebih smooth */
+
+      }
 
         .chat-message.bot .loading span:nth-child(1) { animation-delay: 0s; }
         .chat-message.bot .loading span:nth-child(2) { animation-delay: 0.2s; }
         .chat-message.bot .loading span:nth-child(3) { animation-delay: 0.4s; }
 
+
         @keyframes dot-bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
+          0%, 100% {
+            transform: translateY(0);
+            opacity: 0.4; /* Kurangi opacity awal dan akhir */
+          }
+          50% {
+            transform: translateY(-6px); /* Gerakan vertikal yang lebih besar */
+            opacity: 1; /* Opacity penuh di tengah animasi */
+          }
         }
+
 
     </style>
 </head>
