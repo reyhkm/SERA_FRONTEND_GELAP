@@ -310,12 +310,12 @@
 $botMsg.html(
   data.response.trim()
     .replace(/\n/g, "<br>")
-    .replace(/(\.)(\S{1,5})/g, (match, dot, following) => {
-      // Jika teks setelah titik (tanpa spasi) terdiri dari maksimal 5 karakter,
-      // maka jangan tambahkan <br><br> setelah titik.
-      return following.length <= 5 ? dot + following : dot + "<br><br>" + following;
+    .replace(/\.\s*(\S+)/g, (match, token) => {
+      // Jika token setelah titik (setelah mengabaikan spasi) panjangnya <= 5, jangan tambahkan <br><br>
+      return token.length <= 5 ? ". " + token : ".<br><br>" + token;
     })
 );
+
 
 
 
