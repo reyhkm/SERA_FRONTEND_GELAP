@@ -66,7 +66,7 @@
       overflow: hidden;
     }
 
-    /* Perbesar header dan gunakan font serif */
+    /* Header dengan font serif */
     .chat-header {
       padding: 1.3rem 1rem;
       border-bottom: 0px;
@@ -78,7 +78,7 @@
       align-items: center;
     }
 
-    /* Perbesar ukuran font dan jarak antar chat */
+    /* Body chat, dengan posisi relatif untuk placeholder */
     .chat-body {
       flex-grow: 1;
       overflow-y: auto;
@@ -86,9 +86,9 @@
       display: flex;
       flex-direction: column;
       gap: 1rem;
+      position: relative;
       scrollbar-width: thin;
       scrollbar-color: hsl(240 5% 64.9%) hsl(240 3.7% 15.9%);
-        position: relative; /* Penting untuk positioning absolute placeholder */
     }
 
     .chat-body::-webkit-scrollbar {
@@ -113,7 +113,7 @@
       flex-shrink: 0;
     }
 
-    /* Perbesar textarea dan tombol kirim */
+    /* Styling textarea dan tombol kirim */
     .chat-input {
       flex-grow: 1;
       padding: 0.75rem 1rem;
@@ -159,11 +159,11 @@
       cursor: not-allowed;
     }
 
-    /* Perbesar ukuran chat-message dan ubah border radius */
+    /* Styling pesan chat */
     .chat-message {
       padding: 1rem 1.25rem;
-      border-radius: 1.50rem;
-      font-size: 0.950rem; /* Ukuran font lebih kecil */
+      border-radius: 1.5rem;
+      font-size: 0.95rem;
       line-height: 1.6;
       word-break: break-word;
       max-width: 95%;
@@ -178,12 +178,9 @@
     }
 
     .chat-message.bot {
-      background-color: hsl(240, 3.7%, 15.9%); /* Ditambahkan warna background */
-      color: hsl(0 0% 98%);
       align-self: flex-start;
       border-bottom-left-radius: 0.5rem;
-      /*padding: 0rem;  Dihilangkan, padding sudah di .chat-message */
-
+      padding: 0rem;
     }
 
     .chat-message.bot ul,
@@ -193,7 +190,7 @@
       margin: 0 0 0.5rem 0;
     }
 
-    /* Animasi loading yang lebih soft dengan efek scale dan fade */
+    /* Animasi loading */
     .chat-message.bot .loading {
       display: inline-flex;
       align-items: center;
@@ -230,6 +227,18 @@
         opacity: 1;
       }
     }
+
+    /* Styling untuk placeholder greeting */
+    #chat-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.25rem;
+      text-align: center;
+      pointer-events: none;
+      color: hsl(240 5% 64.9%);
+    }
   </style>
 </head>
 <body>
@@ -238,12 +247,8 @@
       <span>S E R A</span>
     </div>
     <div class="chat-body" id="chat-body">
-      <!-- Placeholder di tengah -->
-      <div class="chat-placeholder" id="chat-placeholder">
-        Hi there! How can I help you today?
-      </div>
-      <!-- Kontainer untuk pesan (awalnya kosong) -->
-      <div id="chat-messages"></div>
+      <!-- Placeholder greeting -->
+      <div id="chat-placeholder">Hi there! How can I help you today?</div>
     </div>
     <form id="chat-form" class="chat-footer">
       <textarea id="chat-input" class="chat-input" placeholder="Ask me anything..." autocomplete="off" rows="1"></textarea>
@@ -254,6 +259,7 @@
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+
   <script>
     function setVh() {
       let vh = window.innerHeight * 0.01;
@@ -267,18 +273,9 @@
     $(document).ready(function() {
       let isLoading = false;
 
-      // Fungsi untuk menyembunyikan placeholder
-      function hidePlaceholder() {
-        $("#chat-placeholder").hide();
-      }
-
-      // Sembunyikan placeholder saat input mulai diisi
-      $("#chat-input").on("input", function() {
+      $("#chat-input").on("input", function () {
         const inputVal = $(this).val().trim();
         $(".chat-send").prop("disabled", inputVal === "" || isLoading);
-        if (inputVal !== "") {
-          hidePlaceholder(); // Sembunyikan saat ada input
-        }
       });
 
       $("#chat-input").on("keydown", function(e) {
@@ -299,18 +296,18 @@
 
         isLoading = true;
         $(".chat-send").prop("disabled", true);
-        hidePlaceholder(); // Pastikan placeholder hilang saat submit
 
-        // Tambahkan pesan ke kontainer pesan, bukan langsung ke chat-body
-        $("#chat-messages").append("<div class='chat-message user'>" + message.replace(/\n/g, "<br>") + "</div>");
+        // Jika placeholder masih ada, hapus
+        $("#chat-placeholder").remove();
+
+        $("#chat-body").append("<div class='chat-message user'>" + message.replace(/\n/g, "<br>") + "</div>");
         $("#chat-input").val("");
         adjustTextArea();
         scrollChatToBottom();
 
         var $botMsg = $("<div class='chat-message bot'>").html("<span class='loading'><span></span><span></span><span></span></span>");
-        $("#chat-messages").append($botMsg); // Tambah ke kontainer pesan
+        $("#chat-body").append($botMsg);
         scrollChatToBottom();
-
 
         $.ajax({
           type: "POST",
@@ -319,7 +316,7 @@
           data: JSON.stringify({ chat: message, history: [] }),
           xhrFields: { withCredentials: true },
           success: function (data) {
-           isLoading = false;
+            isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
             $botMsg.html(
               data.response.trim()
@@ -341,7 +338,7 @@
       });
 
       function scrollChatToBottom() {
-        $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight); // Scroll ke bawah pada kontainer pesan
+        $("#chat-body").scrollTop($("#chat-body")[0].scrollHeight);
       }
 
       function adjustTextArea() {
@@ -359,21 +356,7 @@
       }
 
       $("#chat-input").on("input", adjustTextArea);
-
-       // Tambahkan CSS untuk menengahkan placeholder
-       $("#chat-placeholder").css({
-          "position": "absolute",
-          "top": "50%",
-          "left": "50%",
-          "transform": "translate(-50%, -50%)",
-          "color": "hsl(240 5% 64.9%)", // Warna abu-abu
-          "text-align": "center", // Pastikan teks rata tengah
-           "font-size": "1.1rem",
-           "font-weight": "bold"
-        });
-
     });
-
   </script>
 </body>
 </html>
