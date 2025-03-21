@@ -307,16 +307,16 @@
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
 // Atau, versi yang lebih ringkas (ternary operator):
-$botMsg.html(data.response.trim().replace(/(\n)|([^.]{10,}\.)|\./g, (match, newline, longCharsWithDot) => {
-    if (newline) {
-        return "<br>";
-    } else if (longCharsWithDot) {
-        return longCharsWithDot + "<br><br>";
-    } else {
-        return "."; // Titik dengan kurang dari 10 karakter sebelumnya
-    }
-}));
-
+            $botMsg.html(data.response.trim().replace(/(\n)|([^.]{10,}\.)|\./g, (match, newline, longCharsWithDot) => {
+                console.log("match:", match, "newline:", newline, "longCharsWithDot:", longCharsWithDot); // TAMBAHKAN INI
+                if (newline) {
+                    return "<br>";
+                } else if (longCharsWithDot) {
+                    return longCharsWithDot + "<br><br>";
+                } else {
+                    return ".";
+                }
+            }));
             scrollChatToBottom();
           },
           error: function (error) {
