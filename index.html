@@ -117,7 +117,7 @@
           padding: 0.625rem 0.75rem;
             border: 1px solid hsl(240 3.7% 15.9%);
             border-radius: 0.375rem;
-            font-size: 0.9rem; /* Ukuran font input */
+            font-size: 0.9rem;
             background-color: hsl(240 3.7% 15.9%);
             color: hsl(0 0% 98%);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -162,7 +162,7 @@
         .chat-message {
             padding: 0.75rem 1rem;
           border-radius: 0.5rem;
-            font-size: 0.9rem; /* Ukuran font chat */
+            font-size: 0.9rem;
             line-height: 1.5;
             word-break: break-word;
             max-width: 75%;
@@ -193,13 +193,13 @@
             margin: 0 0 0.5rem 0;
         }
 
-      .chat-message.bot .loading {
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
-          width: 100%;
-
-      }
+        .chat-message.bot .loading {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center; /* Ini tetap penting */
+           /* Hapus width: 100%; */
+           gap: 0.4rem; /* Tambahkan gap */
+        }
 
       .chat-message.bot .loading span {
         display: inline-block;
@@ -207,15 +207,11 @@
         height: 0.5rem;
         border-radius: 50%;
         background-color: hsl(0 0% 98%);
-        margin: 0 0.2rem;
+       /* Hapus margin, gunakan gap di parent */
         animation: dot-bounce 1s infinite cubic-bezier(0.4, 0.0, 0.6, 1);
 
       }
-
-        .chat-message.bot .loading span:nth-child(1) { animation-delay: 0s; }
-        .chat-message.bot .loading span:nth-child(2) { animation-delay: 0.2s; }
-        .chat-message.bot .loading span:nth-child(3) { animation-delay: 0.4s; }
-
+       /* Hapus delay individu */
 
         @keyframes dot-bounce {
           0%, 100% {
@@ -227,8 +223,6 @@
             opacity: 1;
           }
         }
-
-
     </style>
 </head>
 <body>
@@ -293,6 +287,7 @@
         adjustTextArea();
         scrollChatToBottom();
 
+        // Perubahan pada bagian ini
         var $botMsg = $("<div class='chat-message bot'>").html("<span class='loading'><span>.</span><span>.</span><span>.</span></span>");
         $("#chat-body").append($botMsg);
         scrollChatToBottom();
