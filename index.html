@@ -307,7 +307,21 @@
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
 // Atau, versi yang lebih ringkas (ternary operator):
-$botMsg.html(data.response.trim().replace(/(\n|\.)/g, match => match === '\n' ? "<br>" : ".<br><br>").replace(/\.<br><br><br>/g, ".<br><br>"));
+$botMsg.html(data.response.trim().replace(/(\n|\.)/g, (match, offset, string) => {
+    if (match === '\n') {
+        return "<br>";
+    } else { // match === '.'
+        // Ambil substring SEBELUM titik
+        const beforeDot = string.substring(0, offset);
+
+        // Cek panjang string sebelum titik
+        if (beforeDot.length < 10) {
+            return "."; // Jangan tambahkan <br><br>
+        } else {
+            return ".<br><br>"; // Tambahkan <br><br>
+        }
+    }
+}));
 
             scrollChatToBottom();
           },
