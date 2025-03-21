@@ -314,7 +314,7 @@ $botMsg.html(
     // Ganti setiap titik yang didahului oleh karakter non-spasi
     .replace(/(\S+)(\.)/g, (match, preceding, dot) => {
       // Jika jumlah karakter sebelum titik kurang dari 10, jangan tambahkan <br><br>
-      return preceding.length < 10 ? preceding + dot : preceding + dot + "<br><br>";
+      return preceding.length < 5 ? preceding + dot : preceding + dot + "<br><br>";
     })
 );
 
