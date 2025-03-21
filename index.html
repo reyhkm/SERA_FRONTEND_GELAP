@@ -88,6 +88,7 @@
       gap: 1rem;
       scrollbar-width: thin;
       scrollbar-color: hsl(240 5% 64.9%) hsl(240 3.7% 15.9%);
+        position: relative; /* Penting untuk positioning absolute placeholder */
     }
 
     .chat-body::-webkit-scrollbar {
@@ -162,7 +163,7 @@
     .chat-message {
       padding: 1rem 1.25rem;
       border-radius: 1.50rem;
-  font-size: 0.950rem; /* Ukuran font lebih kecil */
+      font-size: 0.950rem; /* Ukuran font lebih kecil */
       line-height: 1.6;
       word-break: break-word;
       max-width: 95%;
@@ -177,12 +178,12 @@
     }
 
     .chat-message.bot {
-      background-color: ;
+      background-color: hsl(240, 3.7%, 15.9%); /* Ditambahkan warna background */
       color: hsl(0 0% 98%);
       align-self: flex-start;
       border-bottom-left-radius: 0.5rem;
-      padding: 0rem;
-  
+      /*padding: 0rem;  Dihilangkan, padding sudah di .chat-message */
+
     }
 
     .chat-message.bot ul,
@@ -237,9 +238,12 @@
       <span>S E R A</span>
     </div>
     <div class="chat-body" id="chat-body">
-      <div class="chat-message bot">
+      <!-- Placeholder di tengah -->
+      <div class="chat-placeholder" id="chat-placeholder">
         Hi there! How can I help you today?
       </div>
+      <!-- Kontainer untuk pesan (awalnya kosong) -->
+      <div id="chat-messages"></div>
     </div>
     <form id="chat-form" class="chat-footer">
       <textarea id="chat-input" class="chat-input" placeholder="Ask me anything..." autocomplete="off" rows="1"></textarea>
@@ -250,7 +254,6 @@
   </div>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-
   <script>
     function setVh() {
       let vh = window.innerHeight * 0.01;
@@ -264,9 +267,18 @@
     $(document).ready(function() {
       let isLoading = false;
 
-      $("#chat-input").on("input", function () {
+      // Fungsi untuk menyembunyikan placeholder
+      function hidePlaceholder() {
+        $("#chat-placeholder").hide();
+      }
+
+      // Sembunyikan placeholder saat input mulai diisi
+      $("#chat-input").on("input", function() {
         const inputVal = $(this).val().trim();
         $(".chat-send").prop("disabled", inputVal === "" || isLoading);
+        if (inputVal !== "") {
+          hidePlaceholder(); // Sembunyikan saat ada input
+        }
       });
 
       $("#chat-input").on("keydown", function(e) {
@@ -287,15 +299,18 @@
 
         isLoading = true;
         $(".chat-send").prop("disabled", true);
+        hidePlaceholder(); // Pastikan placeholder hilang saat submit
 
-        $("#chat-body").append("<div class='chat-message user'>" + message.replace(/\n/g, "<br>") + "</div>");
+        // Tambahkan pesan ke kontainer pesan, bukan langsung ke chat-body
+        $("#chat-messages").append("<div class='chat-message user'>" + message.replace(/\n/g, "<br>") + "</div>");
         $("#chat-input").val("");
         adjustTextArea();
         scrollChatToBottom();
 
         var $botMsg = $("<div class='chat-message bot'>").html("<span class='loading'><span></span><span></span><span></span></span>");
-        $("#chat-body").append($botMsg);
+        $("#chat-messages").append($botMsg); // Tambah ke kontainer pesan
         scrollChatToBottom();
+
 
         $.ajax({
           type: "POST",
@@ -304,23 +319,16 @@
           data: JSON.stringify({ chat: message, history: [] }),
           xhrFields: { withCredentials: true },
           success: function (data) {
-            isLoading = false;
+           isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-// Atau, versi yang lebih ringkas (ternary operator):
-$botMsg.html(
-  data.response.trim()
-    .replace(/\n/g, "<br>")
-    // Tangkap 1-2 kata setelah titik (mengabaikan spasi ekstra)
-.replace(/(?<!@[\w.]+)\.\s*((?:\S+\s?){1,2})/g, (match, following) => {
-  const charCount = following.replace(/\s/g, '').length;
-  return charCount > 5 ? ".<br><br>" + following : ". " + following;
-})
-
-);
-
-
-
-
+            $botMsg.html(
+              data.response.trim()
+                .replace(/\n/g, "<br>")
+                .replace(/(?<!@[\w.]+)\.\s*((?:\S+\s?){1,2})/g, (match, following) => {
+                  const charCount = following.replace(/\s/g, '').length;
+                  return charCount > 5 ? ".<br><br>" + following : ". " + following;
+                })
+            );
             scrollChatToBottom();
           },
           error: function (error) {
@@ -333,7 +341,7 @@ $botMsg.html(
       });
 
       function scrollChatToBottom() {
-        $("#chat-body").scrollTop($("#chat-body")[0].scrollHeight);
+        $("#chat-messages").scrollTop($("#chat-messages")[0].scrollHeight); // Scroll ke bawah pada kontainer pesan
       }
 
       function adjustTextArea() {
@@ -351,7 +359,21 @@ $botMsg.html(
       }
 
       $("#chat-input").on("input", adjustTextArea);
+
+       // Tambahkan CSS untuk menengahkan placeholder
+       $("#chat-placeholder").css({
+          "position": "absolute",
+          "top": "50%",
+          "left": "50%",
+          "transform": "translate(-50%, -50%)",
+          "color": "hsl(240 5% 64.9%)", // Warna abu-abu
+          "text-align": "center", // Pastikan teks rata tengah
+           "font-size": "1.1rem",
+           "font-weight": "bold"
+        });
+
     });
+
   </script>
 </body>
 </html>
