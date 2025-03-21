@@ -307,7 +307,21 @@
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
 // Atau, versi yang lebih ringkas (ternary operator):
-$botMsg.html(data.response.trim().replace(/(\n|\.)/g, match => match === '\n' ? "<br>" : ".<br><br>"));
+$botMsg.html(data.response.trim().replace(/(\n|\.)/g, (match, offset, string) => {
+    if (match === '\n') {
+        return "<br>"; // Baris baru selalu menjadi <br>
+    } else { // match === '.'
+        // Periksa 10 karakter sebelumnya
+        const start = Math.max(0, offset - 10); // Hindari indeks negatif
+        const precedingText = string.substring(start, offset);
+
+        if (precedingText.length >= 10) {
+            return ".<br><br>"; // Ada 10+ karakter, tambahkan <br><br>
+        } else {
+            return "."; // Kurang dari 10 karakter, kembalikan titik saja
+        }
+    }
+}));
 
             scrollChatToBottom();
           },
