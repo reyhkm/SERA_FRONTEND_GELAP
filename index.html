@@ -306,7 +306,7 @@
           success: function (data) {
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-$botMsg.html(data.response.trim().replace(/(\n|\.)/g, "<br>"));
+$botMsg.html(data.response.trim().replace(/(\n|\.)/g, "<br><br>"));
             scrollChatToBottom();
           },
           error: function (error) {
