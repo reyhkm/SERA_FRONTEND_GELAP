@@ -117,7 +117,7 @@
           padding: 0.625rem 0.75rem;
             border: 1px solid hsl(240 3.7% 15.9%);
             border-radius: 0.375rem;
-            font-size: 1rem; /* Perbesar ukuran font input */
+            font-size: 0.9rem; /* Ukuran font input */
             background-color: hsl(240 3.7% 15.9%);
             color: hsl(0 0% 98%);
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
@@ -162,7 +162,7 @@
         .chat-message {
             padding: 0.75rem 1rem;
           border-radius: 0.5rem;
-            font-size: 1rem; /* Perbesar ukuran font chat */
+            font-size: 0.9rem; /* Ukuran font chat */
             line-height: 1.5;
             word-break: break-word;
             max-width: 75%;
@@ -196,8 +196,8 @@
       .chat-message.bot .loading {
           display: inline-flex;
           align-items: center;
-          justify-content: center; /* Pusatkan titik-titik */
-          width: 100%; /* Pastikan loading menutupi seluruh lebar pesan */
+          justify-content: center;
+          width: 100%;
 
       }
 
@@ -208,7 +208,7 @@
         border-radius: 50%;
         background-color: hsl(0 0% 98%);
         margin: 0 0.2rem;
-        animation: dot-bounce 1s infinite cubic-bezier(0.4, 0.0, 0.6, 1); /* Animasi yang lebih smooth */
+        animation: dot-bounce 1s infinite cubic-bezier(0.4, 0.0, 0.6, 1);
 
       }
 
@@ -220,11 +220,11 @@
         @keyframes dot-bounce {
           0%, 100% {
             transform: translateY(0);
-            opacity: 0.4; /* Kurangi opacity awal dan akhir */
+            opacity: 0.4;
           }
           50% {
-            transform: translateY(-6px); /* Gerakan vertikal yang lebih besar */
-            opacity: 1; /* Opacity penuh di tengah animasi */
+            transform: translateY(-6px);
+            opacity: 1;
           }
         }
 
