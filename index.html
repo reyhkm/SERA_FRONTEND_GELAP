@@ -320,17 +320,18 @@
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
 function insertBreaks(text) {
   return text.replace(/(?<!@[\w.]+)\.(?!\d)/g, (match, offset, str) => {
-    // Ambil substring setelah titik, hilangkan spasi di depannya
+    // Ambil substring setelah titik, hilangkan spasi di awal
     let followingText = str.substring(offset + match.length).trimStart();
     let firstChar = followingText.charAt(0);
-    // Jika karakter pertama adalah huruf kapital, sisipkan break
+    // Jika karakter pertama setelah titik adalah huruf kapital, sisipkan break
     if (firstChar && firstChar === firstChar.toUpperCase()) {
       return ".<br><br>";
     }
-    // Jika tidak, hanya sisipkan spasi
-    return ". ";
+    // Jika tidak, kembalikan titik seperti aslinya tanpa tambahan spasi
+    return match;
   });
 }
+
 
 // Penggunaan:
 $botMsg.html(
