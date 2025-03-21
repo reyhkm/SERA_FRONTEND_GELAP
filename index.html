@@ -170,18 +170,24 @@
       padding-left: 0;
       margin: 0 0 0.5rem 0;
     }
+    /* Container untuk loading agar posisinya tepat di tengah bubble chat */
+    .loading-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 2rem; /* Atur tinggi container jika perlu */
+    }
     /* Animasi Loading Tiga Titik */
     .loading {
       display: flex;
       justify-content: center;
-      align-items: flex-end;
-      height: 2rem;
+      align-items: center;
     }
     .loading span {
       display: inline-block;
-      width: 8px;
-      height: 8px;
-      margin: 0 3px;
+      width: 6px;       /* Ukuran titik lebih kecil */
+      height: 6px;
+      margin: 0 2px;    /* Jarak antar titik */
       background-color: hsl(0 0% 98%);
       border-radius: 50%;
       animation: upDown 1s infinite ease-in-out;
@@ -266,8 +272,10 @@
         adjustTextArea();
         scrollChatToBottom();
 
-        // Ganti elemen loading dengan tiga titik
-        var $botMsg = $("<div class='chat-message bot'>").html("<div class='loading'><span></span><span></span><span></span></div>");
+        // Gunakan container loading untuk posisi tepat di tengah bubble
+        var $botMsg = $("<div class='chat-message bot'>").html(
+          "<div class='loading-container'><div class='loading'><span></span><span></span><span></span></div></div>"
+        );
         $("#chat-body").append($botMsg);
         scrollChatToBottom();
 
