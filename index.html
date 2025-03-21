@@ -318,14 +318,26 @@
           success: function (data) {
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-            $botMsg.html(
-              data.response.trim()
-                .replace(/\n/g, "<br>")
-                .replace(/(?<!@[\w.]+)\.\s*((?:\S+\s?){1,2})/g, (match, following) => {
-                  const charCount = following.replace(/\s/g, '').length;
-                  return charCount > 5 ? ".<br><br>" + following : ". " + following;
-                })
-            );
+function insertBreaks(text, threshold = 5) {
+  // Regex untuk mencari titik yang bukan bagian dari email, angka desimal, atau abreviasi sederhana.
+  // (?<!@[\w.]+) dan (?<!\d) berfungsi memastikan bahwa titik bukan bagian dari alamat email atau angka.
+  return text.replace(/(?<!@[\w.]+)(?<!\d)\.(?!\d)/g, (match, offset, str) => {
+    // Ambil substring setelah titik dan hilangkan spasi di depannya.
+    let followingText = str.substring(offset + match.length).trimStart();
+    // Ambil kata pertama (token) setelah titik.
+    let firstWord = followingText.split(/\s+/)[0] || "";
+    // Hitung panjang token dengan menghapus karakter non-alfanumerik
+    let tokenLength = firstWord.replace(/[^A-Za-z0-9]/g, "").length;
+    // Jika token lebih panjang dari threshold, sisipkan <br><br>
+    return tokenLength > threshold ? ".<br><br>" : ". ";
+  });
+}
+
+// Penggunaan di dalam kode utama:
+$botMsg.html(
+  insertBreaks(data.response.trim()).replace(/\n/g, "<br>")
+);
+
             scrollChatToBottom();
           },
           error: function (error) {
