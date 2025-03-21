@@ -297,42 +297,41 @@
         $("#chat-body").append($botMsg);
         scrollChatToBottom();
 
-        $.ajax({
-          type: "POST",
-          url: "https://gemininodejsaspri-production.up.railway.app/chat",
-          contentType: "application/json",
-          data: JSON.stringify({ chat: message, history: [] }),
-          xhrFields: { withCredentials: true },
-          success: function (data) {
-            isLoading = false;
-            $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-// Atau, versi yang lebih ringkas (ternary operator):
-    // 1. Proses teks respons TERLEBIH DAHULU
-    let processedResponse = data.response.trim().replace(/(\n|\.)/g, (match, offset, string) => {
-        if (match === '\n') {
-            return "<br>";
-        } else { // match === '.'
-            const beforeDot = string.substring(0, offset);
-            if (beforeDot.length < 10) {
-                return ".";
-            } else {
-                return ".<br><br>";
+$.ajax({
+    type: "POST",
+    url: "https://gemininodejsaspri-production.up.railway.app/chat",
+    contentType: "application/json",
+    data: JSON.stringify({ chat: message, history: [] }),
+    xhrFields: { withCredentials: true },
+    success: function (data) {
+        isLoading = false;
+        $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
+
+        // 1. Proses teks respons TERLEBIH DAHULU
+        let processedResponse = data.response.trim().replace(/(\n|\.)/g, (match, offset, string) => {
+            if (match === '\n') {
+                return "<br>";
+            } else { // match === '.'
+                const beforeDot = string.substring(0, offset);
+                if (beforeDot.length < 10) {
+                    return ".";
+                } else {
+                    return ".<br><br>";
+                }
             }
-        }
-    });
-
-    // 2. Sekarang, tetapkan teks yang sudah diproses ke $botMsg
-    $botMsg.html(processedResponse);
-
-            scrollChatToBottom();
-          },
-          error: function (error) {
-            isLoading = false;
-            $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-            $botMsg.html("Maaf, terjadi kesalahan.");
-            scrollChatToBottom();
-          }
         });
+
+        // 2. Sekarang, tetapkan teks yang sudah diproses ke $botMsg
+        $botMsg.html(processedResponse);
+        scrollChatToBottom(); // Pastikan scrollChatToBottom() dipanggil setelah memodifikasi DOM
+    },
+    error: function (error) { //Tambahkan error handling yang benar.
+        isLoading = false;
+        $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
+        $botMsg.html("Maaf, terjadi kesalahan."); // Tampilkan pesan error ke user
+        scrollChatToBottom();
+    }
+});
       });
 
       function scrollChatToBottom() {
