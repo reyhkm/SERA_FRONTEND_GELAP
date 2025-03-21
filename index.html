@@ -49,6 +49,7 @@
     :root {
       --vh: 1vh;
     }
+
     body, html {
       height: 100%;
       margin: 0;
@@ -57,12 +58,15 @@
       background-color: hsl(240 10% 3.9%);
       color: hsl(0 0% 98%);
     }
+
     .chat-container {
       display: flex;
       flex-direction: column;
       height: calc(var(--vh, 1vh) * 100);
       overflow: hidden;
     }
+
+    /* Header dengan font serif */
     .chat-header {
       padding: 1.3rem 1rem;
       border-bottom: 0px;
@@ -73,6 +77,8 @@
       display: flex;
       align-items: center;
     }
+
+    /* Body chat, dengan posisi relatif untuk placeholder */
     .chat-body {
       flex-grow: 1;
       overflow-y: auto;
@@ -84,16 +90,20 @@
       scrollbar-width: thin;
       scrollbar-color: hsl(240 5% 64.9%) hsl(240 3.7% 15.9%);
     }
+
     .chat-body::-webkit-scrollbar {
       width: 6px;
     }
+
     .chat-body::-webkit-scrollbar-thumb {
       background-color: hsl(240 5% 64.9%);
       border-radius: 3px;
     }
+
     .chat-body::-webkit-scrollbar-track {
       background-color: hsl(240 3.7% 15.9%);
     }
+
     .chat-footer {
       padding: 1.5rem 1.25rem;
       border-top: 0px;
@@ -102,6 +112,8 @@
       gap: 1rem;
       flex-shrink: 0;
     }
+
+    /* Styling textarea dan tombol kirim */
     .chat-input {
       flex-grow: 1;
       padding: 0.75rem 1rem;
@@ -120,6 +132,7 @@
       border-color: hsl(240 4.9% 83.9%);
       box-shadow: 0 0 0 2px hsl(240 4.9% 83.9% / 0.2);
     }
+
     .chat-send {
       background-color: hsl(0 0% 98%);
       color: hsl(240 5.9% 10%);
@@ -135,14 +148,18 @@
       cursor: pointer;
       transition: background-color 0.2s ease, transform 0.1s ease;
     }
+
     .chat-send:hover {
       background-color: hsl(240 4.9% 83.9%);
     }
+
     .chat-send:disabled {
       background-color: hsl(240 3.7% 15.9%);
       color: hsl(240 5% 64.9%);
       cursor: not-allowed;
     }
+
+    /* Styling pesan chat */
     .chat-message {
       padding: 1rem 1.25rem;
       border-radius: 1.5rem;
@@ -152,29 +169,33 @@
       max-width: 95%;
       position: relative;
     }
+
     .chat-message.user {
       background-color: white;
       color: black;
       align-self: flex-end;
       border-bottom-right-radius: 0.5rem;
     }
-    .chat-message.bot {
-        position: relative; /* pastikan posisi relative */
 
+    .chat-message.bot {
       align-self: flex-start;
       border-bottom-left-radius: 0.5rem;
-      padding: 0.75rem 1.25rem;
+      padding: 0rem;
     }
+
     .chat-message.bot ul,
     .chat-message.bot ol {
       list-style-position: inside;
       padding-left: 0;
       margin: 0 0 0.5rem 0;
     }
+
+    /* Animasi loading */
     .chat-message.bot .loading {
       display: inline-flex;
       align-items: center;
     }
+
     .chat-message.bot .loading span {
       display: inline-block;
       width: 0.6rem;
@@ -185,6 +206,7 @@
       opacity: 0.6;
       animation: loadingPulse 1.5s infinite;
     }
+
     .chat-message.bot .loading span:nth-child(1) {
       animation-delay: 0s;
     }
@@ -194,6 +216,7 @@
     .chat-message.bot .loading span:nth-child(3) {
       animation-delay: 0.6s;
     }
+
     @keyframes loadingPulse {
       0%, 100% {
         transform: scale(0.8);
@@ -204,6 +227,7 @@
         opacity: 1;
       }
     }
+
     /* Styling untuk placeholder greeting */
     #chat-placeholder {
       position: absolute;
@@ -214,32 +238,6 @@
       text-align: center;
       pointer-events: none;
       color: hsl(240 5% 64.9%);
-    }
-    /* Styling untuk ikon copy pada pesan bot */
-.copy-btn {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  background: transparent;
-  border: none;
-  color: hsl(240 5% 64.9%);
-  font-size: 0.9rem;
-  cursor: pointer;
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-}
-
-/* Penyesuaian untuk tampilan desktop */
-@media (min-width: 768px) {
-  .chat-message.bot .copy-btn {
-    top: 8px;
-    right: 1px;
-    font-size: 0.9rem;
-  }
-}
-
-    .copy-btn:hover {
-      opacity: 1;
     }
   </style>
 </head>
@@ -272,15 +270,6 @@
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-    // Fungsi untuk menyalin teks ke clipboard
-    function copyToClipboard(text) {
-      navigator.clipboard.writeText(text).then(() => {
-        console.log('Text copied to clipboard');
-      }).catch(err => {
-        console.error('Error copying text: ', err);
-      });
-    }
-
     $(document).ready(function() {
       let isLoading = false;
 
@@ -308,7 +297,7 @@
         isLoading = true;
         $(".chat-send").prop("disabled", true);
 
-        // Hapus placeholder greeting jika masih ada
+        // Jika placeholder masih ada, hapus
         $("#chat-placeholder").remove();
 
         $("#chat-body").append("<div class='chat-message user'>" + message.replace(/\n/g, "<br>") + "</div>");
@@ -329,7 +318,6 @@
           success: function (data) {
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-            // Perbarui pesan bot dan tambahkan ikon copy
             $botMsg.html(
               data.response.trim()
                 .replace(/\n/g, "<br>")
@@ -338,15 +326,6 @@
                   return charCount > 5 ? ".<br><br>" + following : ". " + following;
                 })
             );
-            // Tambahkan tombol copy ke pesan bot
-            var $copyBtn = $("<button class='copy-btn'><i class='fa-regular fa-copy'></i></button>");
-            $botMsg.append($copyBtn);
-            // Event klik untuk menyalin teks pesan bot
-            $copyBtn.on("click", function(e) {
-              e.stopPropagation();
-              // Mengambil teks tanpa ikon (mengambil innerText dari botMsg)
-              copyToClipboard($botMsg.text().trim());
-            });
             scrollChatToBottom();
           },
           error: function (error) {
