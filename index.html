@@ -319,16 +319,13 @@
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
 function insertBreaks(text, threshold = 5) {
-  return text.replace(/(?<!@[\w.]+)(?<!\d)\.(?!\d)/g, (match, offset, str) => {
-    // Ambil substring setelah titik dan hilangkan spasi di depannya.
+  return text.replace(/(?<!@[\w.]+)\.(?!\d)/g, (match, offset, str) => {
     let followingText = str.substring(offset + match.length).trimStart();
-    // Ambil kata pertama setelah titik.
     let firstWord = followingText.split(/\s+/)[0] || "";
-    // Jika token pertama dimulai dengan huruf kapital, kita anggap sebagai awal kalimat baru.
+    // Jika token pertama dimulai dengan huruf kapital, asumsikan awal kalimat baru
     if (firstWord[0] && firstWord[0] === firstWord[0].toUpperCase()) {
       return ".<br><br>";
     }
-    // Jika tidak, lakukan pengecekan panjang token seperti sebelumnya.
     let tokenLength = firstWord.replace(/[^A-Za-z0-9]/g, "").length;
     return tokenLength > threshold ? ".<br><br>" : ". ";
   });
@@ -337,6 +334,7 @@ function insertBreaks(text, threshold = 5) {
 $botMsg.html(
   insertBreaks(data.response.trim()).replace(/\n/g, "<br>")
 );
+
 
             scrollChatToBottom();
           },
