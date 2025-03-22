@@ -261,18 +261,75 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
-  $(document).ready(function() {
-    let isLoading = false;
-    const maxRetries = 3;
-    const initialDelay = 2000; // 2 detik
+  function setVh() {
+    let vh = window.innerHeight * 0.01;
+    document.documentElement.style.setProperty('--vh', `${vh}px`);
+  }
+  setVh();
+  window.addEventListener('resize', setVh);
 
+  const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  let isLoading = false;
+  const maxRetries = 3; // Jumlah maksimal retry
+
+  function scrollChatToBottom() {
+    $("#chat-body").scrollTop($("#chat-body")[0].scrollHeight);
+  }
+
+  function adjustTextArea() {
+    const $input = $("#chat-input");
+    $input.css("height", "auto");
+    const newHeight = $input[0].scrollHeight;
+    const maxHeight = parseInt($input.css("max-height"), 10);
+    if (newHeight > maxHeight) {
+      $input.css("height", maxHeight + "px");
+      $input.css("overflow-y", "auto");
+    } else {
+      $input.css("height", newHeight + "px");
+      $input.css("overflow-y", "hidden");
+    }
+  }
+
+  // Fungsi untuk mengirim pesan dengan mekanisme retry
+  function sendMessageWithRetry(message, $botMsg, attempt = 1) {
+    $.ajax({
+      type: "POST",
+      url: "https://ai-jailbreak-production.up.railway.app/chat",
+      contentType: "application/json",
+      data: JSON.stringify({ chat: message, history: [] }),
+      xhrFields: { withCredentials: true },
+      success: function (data) {
+        isLoading = false;
+        $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
+        // Fungsi untuk menyisipkan break 
+        $botMsg.html(data.response.trim().replace(/\n/g, "<br>"));
+        scrollChatToBottom();
+      },
+      error: function (error) {
+        if (attempt < maxRetries) {
+          const delay = Math.pow(2, attempt) * 1000; // Exponential backoff: 2^attempt * 1000 ms
+          console.log(`Attempt ${attempt} failed. Retrying in ${delay} ms...`);
+          setTimeout(function () {
+            sendMessageWithRetry(message, $botMsg, attempt + 1);
+          }, delay);
+        } else {
+          isLoading = false;
+          $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
+          $botMsg.html("Maaf, terjadi kesalahan.");
+          scrollChatToBottom();
+        }
+      }
+    });
+  }
+
+  $(document).ready(function() {
     $("#chat-input").on("input", function () {
       const inputVal = $(this).val().trim();
       $(".chat-send").prop("disabled", inputVal === "" || isLoading);
     });
 
     $("#chat-input").on("keydown", function(e) {
-      if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+      if (!isMobile) {
         if (e.key === "Enter" && e.shiftKey) {
           return;
         } else if (e.key === "Enter") {
@@ -284,13 +341,13 @@
 
     $("#chat-form").submit(function (e) {
       e.preventDefault();
-      const message = $("#chat-input").val().trim();
+      var message = $("#chat-input").val().trim();
       if (message === "" || isLoading) return;
 
       isLoading = true;
       $(".chat-send").prop("disabled", true);
 
-      // Jika placeholder masih ada, hapus
+      // Hapus placeholder jika ada
       $("#chat-placeholder").remove();
 
       $("#chat-body").append("<div class='chat-message user'>" + message.replace(/\n/g, "<br>") + "</div>");
@@ -298,77 +355,18 @@
       adjustTextArea();
       scrollChatToBottom();
 
-      const $botMsg = $("<div class='chat-message bot'>").html("<span class='loading'><span></span><span></span><span></span></span>");
+      var $botMsg = $("<div class='chat-message bot'>").html("<span class='loading'><span></span><span></span><span></span></span>");
       $("#chat-body").append($botMsg);
       scrollChatToBottom();
 
-      // Panggil fungsi AJAX dengan retry
-      sendChatRequest(message, 0, $botMsg);
+      // Kirim pesan dengan mekanisme retry
+      sendMessageWithRetry(message, $botMsg);
     });
-
-    function sendChatRequest(message, attempt, $botMsg) {
-      $.ajax({
-        type: "POST",
-        url: "https://ai-jailbreak-production.up.railway.app/chat",
-        contentType: "application/json",
-        data: JSON.stringify({ chat: message, history: [] }),
-        xhrFields: { withCredentials: true },
-        success: function (data) {
-          isLoading = false;
-          $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-          $botMsg.html(data.response.trim().replace(/\n/g, "<br>"));
-          scrollChatToBottom();
-        },
-        error: function (error) {
-          // Jika error message mengandung "closed" dan masih dalam batas retry
-          if (attempt < maxRetries && error.responseText && error.responseText.includes("closed")) {
-            const delay = initialDelay * (attempt + 1);
-            console.warn(`Attempt ${attempt + 1} failed, retrying in ${delay / 1000} seconds...`);
-            setTimeout(function() {
-              sendChatRequest(message, attempt + 1, $botMsg);
-            }, delay);
-          } else {
-            isLoading = false;
-            $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-            $botMsg.html("Maaf, terjadi kesalahan.");
-            scrollChatToBottom();
-          }
-        }
-      });
-    }
-
-    function scrollChatToBottom() {
-      $("#chat-body").scrollTop($("#chat-body")[0].scrollHeight);
-    }
-
-    function adjustTextArea() {
-      const $input = $("#chat-input");
-      $input.css("height", "auto");
-      const newHeight = $input[0].scrollHeight;
-      const maxHeight = parseInt($input.css("max-height"), 10);
-      if(newHeight > maxHeight) {
-        $input.css("height", maxHeight + "px");
-        $input.css("overflow-y", "auto");
-      } else {
-        $input.css("height", newHeight + "px");
-        $input.css("overflow-y", "hidden");
-      }
-    }
-
-    function insertBreaks(text) {
-      return text.replace(/(?<!@[\w.]+)\.(?!\d)/g, (match, offset, str) => {
-        let followingText = str.substring(offset + match.length).trimStart();
-        let firstChar = followingText.charAt(0);
-        if (firstChar && firstChar === firstChar.toUpperCase()) {
-          return ".<br><br>";
-        }
-        return match;
-      });
-    }
 
     $("#chat-input").on("input", adjustTextArea);
   });
 </script>
+
 
 </body>
 </html>
