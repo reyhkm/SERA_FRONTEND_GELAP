@@ -319,7 +319,7 @@
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
 // Atau, versi yang lebih ringkas (ternary operator):
-$botMsg.html(data.response.trim().replace(/(\n|\.)/g, match => match === '\n' ? "<br>" : ".<br><br>"));
+$botMsg.html(data.response.trim().replace(/\n/g, "<br>"));
 
             scrollChatToBottom();
           },
