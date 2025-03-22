@@ -64,6 +64,7 @@
       flex-direction: column;
       height: calc(var(--vh, 1vh) * 100);
       overflow: hidden;
+      /* Menghapus transisi untuk efek langsung */
     }
 
     /* Header dengan font serif */
@@ -89,6 +90,7 @@
       position: relative;
       scrollbar-width: thin;
       scrollbar-color: hsl(240 5% 64.9%) hsl(240 3.7% 15.9%);
+      /* Menghapus transisi untuk efek langsung */
     }
 
     .chat-body::-webkit-scrollbar {
@@ -114,6 +116,7 @@
       position: relative;
       z-index: 2;
       background-color: hsl(240 10% 3.9%);
+      /* Menghapus transisi untuk efek langsung */
     }
 
     /* Styling textarea dan tombol kirim */
@@ -251,12 +254,6 @@
         left: 0;
         right: 0;
         bottom: 0;
-        height: 100%;
-      }
-      
-      .chat-body {
-        flex-grow: 1;
-        overflow-y: auto;
       }
     }
   </style>
@@ -281,27 +278,19 @@
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 
   <script>
-    // Enhanced viewport height calculation
+    // Fungsi sederhana untuk pengaturan tinggi viewport
     function setVh() {
       let vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
     
-    // Set initial viewport height
+    // Set tinggi awal
     setVh();
     
-    // Add event listeners for better viewport handling
-    window.addEventListener('resize', setVh);
-    window.addEventListener('orientationchange', setVh);
-    
-    // Support for iOS visual viewport API if available
-    if (window.visualViewport) {
-      window.visualViewport.addEventListener('resize', () => {
-        setVh();
-        // Prevent scroll jumping when keyboard appears
-        window.scrollTo(0, 0);
-      });
-    }
+    // Update tinggi langsung saat resize
+    window.addEventListener('resize', function() {
+      setVh();
+    });
 
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
@@ -324,14 +313,12 @@
         }
       });
 
-      // Focus event handler for smooth transitions
+      // Event handler ketika input di-klik, langsung update tanpa timeout
       $("#chat-input").on("focus", function() {
-        // On mobile devices, give a small timeout to allow keyboard to appear
         if (isMobile) {
-          setTimeout(function() {
-            scrollChatToBottom();
-            setVh(); // Recalculate viewport height
-          }, 0);
+          // Langsung update tanpa delay
+          setVh();
+          scrollChatToBottom();
         }
       });
 
@@ -415,13 +402,10 @@
 
       $("#chat-input").on("input", adjustTextArea);
       
-      // Add blur event handler for iOS
+      // Event saat keyboard hilang, langsung update tanpa delay
       if (isMobile) {
         $("#chat-input").on("blur", function() {
-          // Give time for the keyboard to disappear
-          setTimeout(function() {
-            setVh(); // Recalculate viewport height
-          }, 300);
+          setVh();
         });
       }
     });
