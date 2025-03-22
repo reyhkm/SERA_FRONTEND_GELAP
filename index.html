@@ -48,8 +48,8 @@
   <style>
     :root {
       --vh: 1vh;
-      --header-height: 0px; /* Placeholder, akan diisi oleh JS */
-      --footer-height: 0px; /* Placeholder, akan diisi oleh JS */
+      --header-height: 0px; /* Placeholder, diisi oleh JavaScript */
+      --footer-height: 0px; /* Placeholder, diisi oleh JavaScript */
     }
 
     body, html {
@@ -64,7 +64,7 @@
     .chat-container {
       display: flex;
       flex-direction: column;
-      height: calc(var(--vh, 1vh) * 100); /* Gunakan --vh */
+      height: calc(var(--vh, 1vh) * 100);
       overflow: hidden;
     }
 
@@ -80,19 +80,19 @@
       align-items: center;
     }
 
-    /* Body chat */
+    /* Body chat, dengan posisi relatif untuk placeholder */
     .chat-body {
-      flex-grow: 1;
-      overflow-y: auto;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      position: relative;
-      scrollbar-width: thin;
-      scrollbar-color: hsl(240 5% 64.9%) hsl(240 3.7% 15.9%);
-      /* Perhitungan tinggi yang tepat */
-      height: calc(100% - var(--header-height) - var(--footer-height));
+        flex-grow: 1;
+        overflow-y: auto;
+        padding: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        position: relative;
+        scrollbar-width: thin;
+        scrollbar-color: hsl(240 5% 64.9%) hsl(240 3.7% 15.9%);
+        /* Perhitungan tinggi yang dinamis */
+        height: calc(100% - var(--header-height) - var(--footer-height));
     }
 
 
@@ -110,15 +110,15 @@
     }
 
     .chat-footer {
-      padding: 1.5rem 1.25rem;
-      /* Tambahkan padding bottom untuk safe-area-inset */
-      padding-bottom: calc(1.5rem + env(safe-area-inset-bottom));
-      border-top: 0px;
-      display: flex;
-      align-items: center;
-      gap: 1rem;
-      flex-shrink: 0;
+        padding: 1.5rem 1.25rem;
+        padding-bottom: calc(1.5rem + env(safe-area-inset-bottom)); /* Tambahkan safe-area-inset-bottom */
+        border-top: 0px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-shrink: 0;
     }
+
 
     /* Styling textarea dan tombol kirim */
     .chat-input {
@@ -129,10 +129,9 @@
       font-size: 1rem;
       background-color: hsl(240 3.7% 15.9%);
       color: hsl(0 0% 98%);
-       /* Hapus transisi height/padding */
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
       resize: none;
-      overflow-y: hidden;  /* Awalnya sembunyikan */
+      overflow-y: hidden;
       max-height: 12rem;
     }
     .chat-input:focus {
@@ -189,8 +188,6 @@
       align-self: flex-start;
       border-bottom-left-radius: 0.5rem;
       padding: 0rem;
-      background-color: hsl(240 3.7% 15.9%); /* Contoh, agar lebih kontras */
-      color: hsl(0 0% 98%);
     }
 
     .chat-message.bot ul,
@@ -249,12 +246,6 @@
       pointer-events: none;
       color: hsl(240 5% 64.9%);
     }
-
-    /* Smooth scroll (jika didukung) */
-    html {
-        scroll-behavior: smooth;
-    }
-
   </style>
 </head>
 <body>
@@ -282,55 +273,25 @@
       document.documentElement.style.setProperty('--vh', `${vh}px`);
     }
 
-     function setHeaderFooterHeights() {
+    function setHeaderFooterHeights() {
         const headerHeight = document.querySelector('.chat-header').offsetHeight;
         const footerHeight = document.querySelector('.chat-footer').offsetHeight;
         document.documentElement.style.setProperty('--header-height', `${headerHeight}px`);
         document.documentElement.style.setProperty('--footer-height', `${footerHeight}px`);
-     }
+    }
 
-    //  Panggil setVh() dan setHeaderFooterHeights() saat pertama kali dan saat resize
+
+    //  Panggil setVh() dan setHeaderFooterHeights() saat pertama kali halaman dimuat dan saat resize
     setVh();
     setHeaderFooterHeights();
     window.addEventListener('resize', setVh);
     window.addEventListener('resize', setHeaderFooterHeights);
 
 
-
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
     $(document).ready(function() {
       let isLoading = false;
-       let resizeTimeout; // Untuk debounce
-
-      function debouncedAdjustTextArea() {
-          clearTimeout(resizeTimeout);
-          resizeTimeout = setTimeout(adjustTextArea, 50); // Jeda 50ms (sesuaikan)
-      }
-
-
-      function adjustTextArea() {
-        const $input = $("#chat-input");
-
-        requestAnimationFrame(() => { // Gunakan requestAnimationFrame
-          $input.css("height", "auto");
-          const newHeight = $input[0].scrollHeight;
-          const maxHeight = parseInt($input.css("max-height"), 10);
-
-          if (newHeight > maxHeight) {
-              $input.css("height", maxHeight + "px");
-              $input.css("overflow-y", "auto"); // Aktifkan scrollbar
-          } else {
-              $input.css("height", newHeight + "px");
-              $input.css("overflow-y", "hidden"); // Sembunyikan scrollbar
-          }
-        });
-      }
-
-       // Panggil adjustTextArea() saat pertama kali
-      adjustTextArea();
-      $("#chat-input").on("input", debouncedAdjustTextArea); // Gunakan debounced version
-
 
       $("#chat-input").on("input", function () {
         const inputVal = $(this).val().trim();
@@ -370,24 +331,35 @@
 
         $.ajax({
           type: "POST",
-          url: "https://gemininodejsaspri-production.up.railway.app/chat",  // Ganti URL jika perlu
+          url: "https://gemininodejsaspri-production.up.railway.app/chat",
           contentType: "application/json",
           data: JSON.stringify({ chat: message, history: [] }),
           xhrFields: { withCredentials: true },
           success: function (data) {
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-              function insertBreaks(text) {
+            function insertBreaks(text) {
                 return text.replace(/(?<!@[\w.]+)\.(?!\d)/g, (match, offset, str) => {
-                  let followingText = str.substring(offset + match.length).trimStart();
-                  let firstChar = followingText.charAt(0);
-                  if (firstChar && firstChar === firstChar.toUpperCase()) {
-                    return ".<br><br>";
-                  }
-                  return match;
+                    // Ambil substring setelah titik, hilangkan spasi di awal
+                    let followingText = str.substring(offset + match.length).trimStart();
+                    let firstChar = followingText.charAt(0);
+                    // Jika karakter pertama setelah titik adalah huruf kapital, sisipkan break
+                    if (firstChar && firstChar === firstChar.toUpperCase()) {
+                        return ".<br><br>";
+                    }
+                    // Jika tidak, kembalikan titik seperti aslinya tanpa tambahan spasi
+                    return match;
                 });
-              }
-            $botMsg.html(insertBreaks(data.response.trim()).replace(/\n/g, "<br>"));
+            }
+
+
+            // Penggunaan:
+            $botMsg.html(
+            insertBreaks(data.response.trim()).replace(/\n/g, "<br>")
+            );
+
+
+
             scrollChatToBottom();
           },
           error: function (error) {
@@ -400,8 +372,26 @@
       });
 
       function scrollChatToBottom() {
-          $("#chat-body").scrollTop($("#chat-body")[0].scrollHeight);
+        $("#chat-body").scrollTop($("#chat-body")[0].scrollHeight);
       }
+
+      function adjustTextArea() {
+        const $input = $("#chat-input");
+        $input.css("height", "auto");
+        const newHeight = $input[0].scrollHeight;
+        const maxHeight = parseInt($input.css("max-height"), 10);
+        if(newHeight > maxHeight) {
+          $input.css("height", maxHeight + "px");
+          $input.css("overflow-y", "auto");
+        } else {
+          $input.css("height", newHeight + "px");
+          $input.css("overflow-y", "hidden");
+        }
+      }
+
+      $("#chat-input").on("input", adjustTextArea);
+       // Panggil adjustTextArea saat halaman pertama dimuat
+      adjustTextArea();
     });
   </script>
 </body>
