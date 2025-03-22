@@ -318,27 +318,8 @@
           success: function (data) {
             isLoading = false;
             $(".chat-send").prop("disabled", $("#chat-input").val().trim() === "");
-function insertBreaks(text) {
-  return text.replace(/(?<!@[\w.]+)\.(?!\d)/g, (match, offset, str) => {
-    // Ambil substring setelah titik, hilangkan spasi di awal
-    let followingText = str.substring(offset + match.length).trimStart();
-    let firstChar = followingText.charAt(0);
-    // Jika karakter pertama setelah titik adalah huruf kapital, sisipkan break
-    if (firstChar && firstChar === firstChar.toUpperCase()) {
-      return ".<br><br>";
-    }
-    // Jika tidak, kembalikan titik seperti aslinya tanpa tambahan spasi
-    return match;
-  });
-}
-
-
-// Penggunaan:
-$botMsg.html(
-  insertBreaks(data.response.trim()).replace(/\n/g, "<br>")
-);
-
-
+// Atau, versi yang lebih ringkas (ternary operator):
+$botMsg.html(data.response.trim().replace(/(\n|\.)/g, match => match === '\n' ? "<br>" : ".<br><br>"));
 
             scrollChatToBottom();
           },
