@@ -207,7 +207,7 @@
         opacity: 1;
       }
     }
-    /* Container untuk placeholder (bangun datar dan teks) */
+    /* Container untuk placeholder (logo dan teks) */
     #chat-placeholder-container {
       position: absolute;
       top: 50%;
@@ -215,8 +215,8 @@
       transform: translate(-50%, -50%);
       text-align: center;
     }
-    /* Bangun datar (misal: kotak dengan sudut melengkung) di atas placeholder */
-    #chat-shape {
+    /* Logo bintang dengan efek shimmer */
+    #chat-logo {
       width: 60px;
       height: 60px;
       margin: 0 auto 10px auto;
@@ -231,12 +231,12 @@
       background-size: 300% 100%;
       background-position: 100% 0;
       animation: shimmer 2.5s linear infinite;
-      border-radius: 10px;
+      /* Membentuk elemen menjadi bintang menggunakan clip-path */
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
     }
     /* Placeholder greeting dengan efek shimmer */
     #chat-placeholder {
       font-size: 1.25rem;
-      /* Gunakan efek shimmer yang sama */
       background: linear-gradient(
         90deg,
         hsl(240 5% 64.9%) 0%,
@@ -269,9 +269,9 @@
       <span>S E R A</span>
     </div>
     <div class="chat-body" id="chat-body">
-      <!-- Container untuk bangun datar dan placeholder greeting -->
+      <!-- Container untuk logo bintang dan placeholder greeting -->
       <div id="chat-placeholder-container">
-        <div id="chat-shape"></div>
+        <div id="chat-logo"></div>
         <div id="chat-placeholder">Hai, Sera di sini!</div>
       </div>
     </div>
