@@ -274,23 +274,16 @@
       /* --- End Shimmer Effect --- */
     }
 
-    /* Keyframes DENGAN JEDA di akhir */
-    @keyframes shimmerWithDelay {
-      /* Fase Gerakan (0% - 85.7% dari total 3.5s -> sekitar 3 detik) */
-      0% {
-        background-position: 150% 0; /* Mulai dari kanan */
-      }
-      85.7% {
-        background-position: -150% 0; /* Selesai bergerak ke kiri */
-      }
+@keyframes shimmer {
+  0% {
+    background-position: -150% 0;
+  }
+  100% {
+    background-position: 150% 0;
+  }
+}
 
-      /* Fase Jeda (85.7% - 100% dari total 3.5s -> sekitar 0.5 detik) */
-      /* Tetap di posisi akhir selama sisa waktu siklus */
-      100% {
-        background-position: -150% 0;
-      }
-    }
-    /* --- End Placeholder Styling --- */
+
 
   </style>
 </head>
