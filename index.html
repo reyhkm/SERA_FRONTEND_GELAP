@@ -270,11 +270,12 @@
 
       /* Animation */
       /* name | duration | timing-function | delay | iteration-count | fill-mode */
-      animation: shimmer 2.5s ease-out 0.5s 1 forwards;
+      /* Changed '1' to 'infinite', 'ease-out' to 'linear', adjusted duration slightly */
+      animation: shimmer 3s linear 0.5s infinite;
       /* --- End Shimmer Effect --- */
     }
 
-    /* Keyframes for the shimmer animation */
+    /* Keyframes for the shimmer animation (No changes needed here) */
     @keyframes shimmer {
       0% {
         /* Start position (glow is off-screen to the right) */
@@ -282,11 +283,10 @@
       }
       100% {
         /* End position (glow has moved off-screen to the left) */
-        /* The gradient is designed so the normal color covers the text at the end */
         background-position: -150% 0;
       }
     }
-    /* --- End Placeholder Styling --- */
+
 
   </style>
 </head>
