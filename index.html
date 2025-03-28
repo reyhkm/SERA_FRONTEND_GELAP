@@ -180,8 +180,18 @@
     .chat-message.bot {
       align-self: flex-start;
       border-bottom-left-radius: 0.5rem;
-      padding: 0rem;
+      /* Adjusted padding for bot messages if they contain only text */
+       padding: 1rem 1.25rem;
+       background-color: hsl(240 3.7% 15.9%); /* Give bot messages a background */
+       color: hsl(0 0% 98%);
     }
+
+    /* Ensure padding is removed only when loading indicator is present */
+    .chat-message.bot:has(.loading) {
+        padding: 0rem;
+        background-color: transparent; /* Remove background for loading */
+    }
+
 
     .chat-message.bot ul,
     .chat-message.bot ol {
@@ -194,6 +204,10 @@
     .chat-message.bot .loading {
       display: inline-flex;
       align-items: center;
+       padding: 1rem 1.25rem; /* Add padding to the loading container */
+       background-color: hsl(240 3.7% 15.9%); /* Add background to loading */
+       border-radius: 1.5rem;
+       border-bottom-left-radius: 0.5rem;
     }
 
     .chat-message.bot .loading span {
@@ -228,7 +242,7 @@
       }
     }
 
-    /* Styling untuk placeholder greeting */
+    /* --- Styling untuk placeholder greeting dengan efek shimmer --- */
     #chat-placeholder {
       position: absolute;
       top: 50%;
@@ -237,8 +251,43 @@
       font-size: 1.25rem;
       text-align: center;
       pointer-events: none;
-      color: hsl(240 5% 64.9%);
+
+      /* --- Start Shimmer Effect --- */
+      /* Set base color via background gradient */
+      background: linear-gradient(
+        90deg, /* Left to right */
+        hsl(240 5% 64.9%) 0%,   /* Normal muted color */
+        hsl(240 5% 64.9%) 40%,  /* Normal muted color */
+        hsl(0 0% 98%) 50%,      /* Bright foreground color (the "glow") */
+        hsl(240 5% 64.9%) 60%,  /* Normal muted color */
+        hsl(240 5% 64.9%) 100% /* Normal muted color */
+      );
+      background-size: 250% 100%; /* Make gradient wider than the element */
+      background-position: 150% 0; /* Start with the gradient shifted right */
+      color: transparent; /* Make text transparent to show background */
+      -webkit-background-clip: text; /* Clip background to text shape (Chrome/Safari) */
+      background-clip: text; /* Clip background to text shape (Standard) */
+
+      /* Animation */
+      /* name | duration | timing-function | delay | iteration-count | fill-mode */
+      animation: shimmer 2.5s ease-out 0.5s 1 forwards;
+      /* --- End Shimmer Effect --- */
     }
+
+    /* Keyframes for the shimmer animation */
+    @keyframes shimmer {
+      0% {
+        /* Start position (glow is off-screen to the right) */
+        background-position: 150% 0;
+      }
+      100% {
+        /* End position (glow has moved off-screen to the left) */
+        /* The gradient is designed so the normal color covers the text at the end */
+        background-position: -150% 0;
+      }
+    }
+    /* --- End Placeholder Styling --- */
+
   </style>
 </head>
 <body>
