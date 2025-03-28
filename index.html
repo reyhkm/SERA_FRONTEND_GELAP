@@ -180,18 +180,8 @@
     .chat-message.bot {
       align-self: flex-start;
       border-bottom-left-radius: 0.5rem;
-      /* Adjusted padding for bot messages if they contain only text */
-       padding: 1rem 1.25rem;
-       background-color: hsl(240 3.7% 15.9%); /* Give bot messages a background */
-       color: hsl(0 0% 98%);
+      padding: 0rem;
     }
-
-    /* Ensure padding is removed only when loading indicator is present */
-    .chat-message.bot:has(.loading) {
-        padding: 0rem;
-        background-color: transparent; /* Remove background for loading */
-    }
-
 
     .chat-message.bot ul,
     .chat-message.bot ol {
@@ -204,10 +194,6 @@
     .chat-message.bot .loading {
       display: inline-flex;
       align-items: center;
-       padding: 1rem 1.25rem; /* Add padding to the loading container */
-       background-color: hsl(240 3.7% 15.9%); /* Add background to loading */
-       border-radius: 1.5rem;
-       border-bottom-left-radius: 0.5rem;
     }
 
     .chat-message.bot .loading span {
@@ -242,7 +228,18 @@
       }
     }
 
-/* --- Styling untuk placeholder greeting dengan efek shimmer --- */
+    /* Styling untuk placeholder greeting */
+    #chat-placeholder {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 1.25rem;
+      text-align: center;
+      pointer-events: none;
+      color: hsl(240 5% 64.9%);
+    }
+    /* --- Styling untuk placeholder greeting dengan efek shimmer --- */
 #chat-placeholder {
   position: absolute;
   top: 50%;
@@ -278,8 +275,6 @@
     background-position: 0 0;
   }
 }
-
-
 
   </style>
 </head>
