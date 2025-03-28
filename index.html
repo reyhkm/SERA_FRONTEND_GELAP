@@ -178,7 +178,6 @@ body, html {
 .chat-message.bot {
   align-self: flex-start;
   border-bottom-left-radius: 0.5rem;
-  /* Adjusted padding for bot messages if they contain only text */
   padding: 1rem 1.25rem;
   background-color: hsl(240 3.7% 15.9%);
   color: hsl(0 0% 98%);
@@ -256,22 +255,22 @@ body, html {
     hsl(240 5% 64.9%) 60%,
     hsl(240 5% 64.9%) 100%
   );
-  /* Ubah background-size dan posisi sehingga animasi loop bisa mulus */
   background-size: 300% 100%;
-  background-position: 0% 0;
+  /* Inisialisasi posisi dari kiri */
+  background-position: 100% 0;
   color: transparent;
   -webkit-background-clip: text;
   background-clip: text;
   animation: shimmer 3s linear infinite;
 }
 
-/* Keyframes shimmer yang disesuaikan untuk animasi seamless */
+/* Keyframes shimmer yang disesuaikan agar animasi mulai dari kiri */
 @keyframes shimmer {
   0% {
-    background-position: 0% 0;
+    background-position: 100% 0;
   }
   100% {
-    background-position: 100% 0;
+    background-position: 0 0;
   }
 }
 
