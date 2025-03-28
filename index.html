@@ -262,29 +262,35 @@
         hsl(240 5% 64.9%) 100%
       );
       background-size: 250% 100%;
-      background-position: 150% 0;
+      background-position: 150% 0; /* Initial position */
       color: transparent;
       -webkit-background-clip: text;
       background-clip: text;
 
       /* Animation */
-      /* name | duration | timing-function | iteration-count */
-      /* Delay (0.5s) removed */
-      animation: shimmer 15s linear infinite;
+      /* Durasi total = durasi gerak (3s) + jeda (0.5s) = 3.5s */
+      /* Delay awal dihapus agar konsisten */
+      animation: shimmerWithDelay 3.5s linear infinite;
       /* --- End Shimmer Effect --- */
     }
 
-    /* Keyframes for the shimmer animation (No changes needed here) */
-    @keyframes shimmer {
+    /* Keyframes DENGAN JEDA di akhir */
+    @keyframes shimmerWithDelay {
+      /* Fase Gerakan (0% - 85.7% dari total 3.5s -> sekitar 3 detik) */
       0% {
-        background-position: 150% 0;
+        background-position: 150% 0; /* Mulai dari kanan */
       }
+      85.7% {
+        background-position: -150% 0; /* Selesai bergerak ke kiri */
+      }
+
+      /* Fase Jeda (85.7% - 100% dari total 3.5s -> sekitar 0.5 detik) */
+      /* Tetap di posisi akhir selama sisa waktu siklus */
       100% {
         background-position: -150% 0;
       }
     }
     /* --- End Placeholder Styling --- */
-
 
   </style>
 </head>
